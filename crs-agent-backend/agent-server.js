@@ -1092,7 +1092,86 @@ app.post('/api/send-report-email', async (req, res) => {
   }
 });
 
+// =========================================================================
+// BUILT-IN 15-MINUTE AUTONOMOUS CRON SCHEDULER (*/15 * * * *)
+// =========================================================================
+const http = require('http');
+const CRON_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+let cronState = {
+  enabled: true,
+  cronExpression: '*/15 * * * *',
+  intervalMinutes: 15,
+  nextRunAt: new Date(Date.now() + CRON_INTERVAL_MS).toISOString(),
+  lastRunAt: null,
+  lastRunStatus: 'Scheduled (Waiting for next 15-min window)',
+  runsCompleted: 0
+};
+
+function postLocalJson(endpointPath, payload) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify(payload || {});
+    const req = http.request(
+      {
+        hostname: '127.0.0.1',
+        port: process.env.PORT || 4000,
+        path: endpointPath,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body)
+        }
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            resolve({ success: false, error: e.message });
+          }
+        });
+      }
+    );
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+async function executeScheduled15MinCron() {
+  if (!cronState.enabled) return;
+  cronState.lastRunAt = new Date().toISOString();
+  cronState.nextRunAt = new Date(Date.now() + CRON_INTERVAL_MS).toISOString();
+  try {
+    console.log(`[15-Min Cron] Executing autonomous 4-Agent OODA scan + RL update at ${cronState.lastRunAt}...`);
+    const scanRes = await postLocalJson('/api/run-scan', {
+      trigger: 'scheduled-15min-cron',
+      autoCreatePr: false
+    });
+    const emailRes = await postLocalJson('/api/send-report-email', {
+      toEmail: process.env.ALERT_RECIPIENT_EMAIL || 'mohnishb07@gmail.com',
+      createNewPr: false
+    });
+    cronState.runsCompleted += 1;
+    cronState.lastRunStatus = scanRes.success
+      ? `Success (RL Episode #${scanRes.rlUpdate?.latestEpisode?.episode || '?'}, Email Dispatched to ${emailRes.toEmail || 'mohnishb07@gmail.com'})`
+      : `Error: ${scanRes.error || 'Unknown'}`;
+  } catch (err) {
+    cronState.lastRunStatus = `Failed: ${err.message}`;
+  }
+}
+
+setInterval(executeScheduled15MinCron, CRON_INTERVAL_MS);
+
+app.get('/api/cron-status', (req, res) => {
+  res.json({
+    success: true,
+    ...cronState
+  });
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`CRS v2.0 Agent Backend (OODA + RL Engine) running on http://localhost:${PORT}`);
+  console.log(`CRS v2.0 Agent Backend (OODA + RL Engine + 15-Min Cron) running on http://localhost:${PORT}`);
 });

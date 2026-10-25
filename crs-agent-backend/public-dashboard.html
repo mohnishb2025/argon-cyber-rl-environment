@@ -28,6 +28,9 @@
           <div class="flex items-center space-x-2">
             <h1 class="text-lg font-bold tracking-tight text-slate-900">CRS // Autonomous SecOps & RL Platform</h1>
             <span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">v2.0 NIST CSF 2.0</span>
+            <span id="cronBadge" class="text-xs font-semibold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200" title="Automated 15-minute vulnerability scan & email schedule">
+              ⏱️ 15-Min Cron (*/15 * * * *) Active
+            </span>
           </div>
           <p class="text-xs text-slate-500">4-Agent OODA Cyber Reasoning Loop (Scout → Triage → Surgeon → Verifier) + Contextual Bandit RL</p>
         </div>
@@ -1023,9 +1026,23 @@ Running ACME Checkout Unit Tests...
       }
     });
 
+    async function loadCronStatus() {
+      try {
+        const res = await fetch('/api/cron-status');
+        const data = await res.json();
+        if (data.success) {
+          const nextTime = new Date(data.nextRunAt).toLocaleTimeString();
+          const badge = document.getElementById('cronBadge');
+          badge.innerText = `⏱️ 15-Min Cron (${data.cronExpression}) Active — Next: ${nextTime}`;
+        }
+      } catch {}
+    }
+
     // Initial load
     loadRepoFiles();
     loadPrs();
+    loadCronStatus();
+    setInterval(loadCronStatus, 30000);
   </script>
 </body>
 </html>
