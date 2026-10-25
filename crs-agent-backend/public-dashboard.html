@@ -386,6 +386,33 @@ Running ACME Checkout Unit Tests...
       </div>
     </section>
 
+    <!-- Live GitHub Pull Requests Feed (Project Codebase PRs + Autonomous Scan & Fix PRs) -->
+    <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-slate-800 text-white">GitHub PR Pipeline</span>
+            <h2 class="text-sm font-bold text-slate-900">Live GitHub Pull Requests (<code>mohnishb2025/argon-cyber-rl-environment</code>)</h2>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Tracks both <strong>Project Codebase PRs</strong> (<code>feat/*</code> platform upgrades) and <strong>Autonomous Scan & Fix PRs</strong> (<code>crs/*</code> target patches + RL Q-table updates).
+          </p>
+        </div>
+        <a
+          href="https://github.com/mohnishb2025/argon-cyber-rl-environment/pulls"
+          target="_blank"
+          class="text-xs font-semibold bg-white hover:bg-slate-50 text-indigo-600 border border-slate-300 px-3 py-1.5 rounded-md shadow-sm transition"
+        >
+          ↗ View All on GitHub
+        </a>
+      </div>
+      <div class="p-5">
+        <div id="githubPrsList" class="space-y-2 text-xs text-slate-700">
+          <div class="text-slate-400">Loading Pull Requests from GitHub...</div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Printable NIST CSF 2.0 Compliance & Executive Incident Report Modal -->
@@ -736,6 +763,41 @@ Running ACME Checkout Unit Tests...
       modal.classList.remove('flex');
     });
 
+    async function loadPrs() {
+      const container = document.getElementById('githubPrsList');
+      try {
+        const res = await fetch('/api/prs');
+        const data = await res.json();
+        if (!data.success || !data.prs || !data.prs.length) {
+          container.innerHTML = '<div class="text-slate-400">No Pull Requests found yet. Click "✅ Approve & Create GitHub PR" to open one!</div>';
+          return;
+        }
+        container.innerHTML = data.prs.map((pr) => {
+          const isScanPr = pr.category === 'SCAN_AND_FIX_PR';
+          const badgeClass = isScanPr
+            ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+            : 'bg-indigo-100 text-indigo-800 border-indigo-200';
+          const badgeLabel = isScanPr ? '🛡️ CRS SCAN & FIX PR' : '⚙️ PROJECT CODEBASE PR';
+          return `
+            <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2 py-0.5 text-[11px] font-bold rounded border ${badgeClass}">${badgeLabel}</span>
+                <span class="font-mono font-bold text-slate-500">#${pr.number}</span>
+                <a href="${pr.url}" target="_blank" class="font-bold text-slate-900 hover:text-indigo-600 underline">${escapeHtml(pr.title)}</a>
+                <code class="text-[11px] bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-600">${escapeHtml(pr.headRefName)}</code>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold ${pr.state === 'OPEN' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-purple-50 text-purple-700 border border-purple-200'}">${pr.state}</span>
+                <a href="${pr.url}" target="_blank" class="text-indigo-600 font-semibold hover:underline">Open PR ↗</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        container.innerHTML = '<div class="text-rose-600">Error loading PRs: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+
     document.getElementById('createPrBtn').addEventListener('click', async () => {
       const btn = document.getElementById('createPrBtn');
       const statusEl = document.getElementById('prResultStatus');
@@ -746,6 +808,7 @@ Running ACME Checkout Unit Tests...
         const data = await res.json();
         if (!data.success) throw new Error(data.error || 'Failed to create PR');
         statusEl.innerHTML = `🚀 <strong>GitHub PR Opened:</strong> <a href="${data.prUrl}" target="_blank" class="text-indigo-600 underline font-semibold">${data.prUrl}</a> (<code class="bg-slate-100 px-1 rounded">${data.branchName}</code>)`;
+        loadPrs();
       } catch (err) {
         alert('GitHub PR Error: ' + err.message);
       } finally {
@@ -756,6 +819,7 @@ Running ACME Checkout Unit Tests...
 
     // Initial load
     loadRepoFiles();
+    loadPrs();
   </script>
 </body>
 </html>
