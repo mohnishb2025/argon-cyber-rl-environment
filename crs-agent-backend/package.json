@@ -1,0 +1,14 @@
+{
+  "name": "crs-agent-backend",
+  "version": "2.0.0",
+  "description": "4-Agent Cyber Reasoning System (OODA Loop + RL Pattern Memory)",
+  "main": "agent-server.js",
+  "scripts": {
+    "start": "node agent-server.js",
+    "scan": "node -e \"fetch('http://localhost:4000/api/run-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trigger:'scheduled-automation'})}).then(r=>r.json()).then(d=>console.log(JSON.stringify(d,null,2)))\""
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}

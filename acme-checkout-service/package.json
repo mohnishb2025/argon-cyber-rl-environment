@@ -1,0 +1,11 @@
+{
+  "name": "acme-checkout-service",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "js-yaml": "3.13.0",
+    "lodash": "4.17.15"
+  }
+}
