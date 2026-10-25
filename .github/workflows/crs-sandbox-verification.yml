@@ -1,0 +1,29 @@
+name: CRS Autonomous Sandbox QA & Reachability Gate
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  verify-remediation:
+    name: Agent 4 (Verifier) — Sandbox Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: acme-checkout-service
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies in Isolated Sandbox
+        run: npm install --no-audit --no-fund
+
+      - name: Execute Verifier Unit Test Suite (test.js)
+        run: npm test
