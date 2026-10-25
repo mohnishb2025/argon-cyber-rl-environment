@@ -737,7 +737,7 @@ function createGithubScanAndFixPr(rlStateInput) {
     execSync('git checkout -f main', { cwd: repoRoot, stdio: 'pipe' });
     fs.writeFileSync(pkgPath, originalPkg, 'utf-8');
     fs.writeFileSync(checkoutPath, originalCheckout, 'utf-8');
-    saveRlMemory(rlState);
+    fs.writeFileSync(RL_MEMORY_PATH, JSON.stringify(rlState, null, 2), 'utf-8');
 
     return {
       success: true,
