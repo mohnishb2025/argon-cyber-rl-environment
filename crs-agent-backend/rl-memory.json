@@ -1,6 +1,6 @@
 {
-  "episodes": 1,
-  "cumulativeReward": 1.5,
+  "episodes": 3,
+  "cumulativeReward": 4.5,
   "learningRateAlpha": 0.25,
   "discountFactorGamma": 0.9,
   "qTable": {
@@ -10,9 +10,9 @@
       "cve": "CVE-2019-10766",
       "stateFeatures": "pkg=js-yaml@3.13.0 | imported=true | sink=yaml.load() | line=checkout.js:5",
       "recommendedAction": "UPGRADE_SEMVER_MAJOR_SAFE (^4.1.0 where yaml.load defaults to DEFAULT_SAFE_SCHEMA)",
-      "qValue": 0.625,
-      "visits": 1,
-      "confidence": 74.3,
+      "qValue": 0.7891,
+      "visits": 3,
+      "confidence": 89.3,
       "lastReward": 1,
       "learnedIntuition": "Verified Pattern: Upgrading js-yaml 3.13.0 -> ^4.1.0 neutralizes CWE-502 at checkout.js:5 while preserving 100% unit test compatibility (yaml.load API signature unchanged)."
     },
@@ -22,14 +22,70 @@
       "cve": "CVE-2020-8203",
       "stateFeatures": "pkg=lodash@4.17.15 | imported=false | sink=0 call sites across repo",
       "recommendedAction": "SUPPRESS_UNREACHABLE_NOISE (Defer lockfile churn & suppress SecOps page)",
-      "qValue": 0.3875,
-      "visits": 1,
-      "confidence": 74.3,
+      "qValue": 0.4367,
+      "visits": 3,
+      "confidence": 89.3,
       "lastReward": 0.5,
       "learnedIntuition": "Verified Pattern: Unimported dependency in package.json has 0 reachable AST paths; suppressing alert eliminates 50% SecOps alert fatigue with zero production risk."
     }
   },
   "recentEpisodes": [
+    {
+      "episode": 3,
+      "timestamp": "2026-10-25T23:27:33.063Z",
+      "trigger": "autonomous-pr-pipeline",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.7188,
+          "newQ": 0.7891,
+          "tdError": 0.2812,
+          "reward": 1,
+          "visits": 3,
+          "confidence": 89.3
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4156,
+          "newQ": 0.4367,
+          "tdError": 0.0844,
+          "reward": 0.5,
+          "visits": 3,
+          "confidence": 89.3
+        }
+      ]
+    },
+    {
+      "episode": 2,
+      "timestamp": "2026-10-25T23:23:11.805Z",
+      "trigger": "dashboard-manual",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.625,
+          "newQ": 0.7188,
+          "tdError": 0.375,
+          "reward": 1,
+          "visits": 2,
+          "confidence": 83.4
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.3875,
+          "newQ": 0.4156,
+          "tdError": 0.1125,
+          "reward": 0.5,
+          "visits": 2,
+          "confidence": 83.4
+        }
+      ]
+    },
     {
       "episode": 1,
       "timestamp": "2026-10-25T23:08:06.336Z",
