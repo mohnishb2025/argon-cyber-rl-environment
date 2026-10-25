@@ -108,6 +108,73 @@
       </div>
     </section>
 
+    <!-- Email / Gmail Report & GitHub PR Dispatch Panel -->
+    <section class="bg-white rounded-xl border border-indigo-200 shadow-sm p-4">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-indigo-100 text-indigo-800">📧 Gmail & SecOps Dispatch</span>
+            <h2 class="text-sm font-bold text-slate-900">Automated NIST CSF 2.0 Report & GitHub PR Email Notification</h2>
+            <span id="emailModeBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ● Live SMTP Relay + Gmail Compose Active
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">
+            Dispatches the full <strong>NIST CSF 2.0 Vulnerability & RL Executive Report</strong> with direct links to the active <strong>GitHub Remediation PR</strong> (<a href="https://github.com/mohnishb2025/argon-cyber-rl-environment/pulls" target="_blank" class="text-indigo-600 underline font-medium">mohnishb2025/argon-cyber-rl-environment/pulls</a>). Add a 16-char <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-indigo-600 underline">Google App Password</a> for direct <code>smtp.gmail.com:465</code> inbox delivery, or send immediately via Live Cloud SMTP Relay.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center bg-slate-50 rounded-md border border-slate-300 px-2.5 py-1.5">
+            <span class="text-xs text-slate-500 mr-1.5 font-medium">To Gmail:</span>
+            <input
+              id="emailRecipientInput"
+              type="email"
+              value="mohnishb07@gmail.com"
+              placeholder="recipient@gmail.com"
+              class="bg-transparent text-xs font-mono text-slate-800 placeholder-slate-400 focus:outline-none w-44"
+            />
+          </div>
+
+          <div class="flex items-center bg-slate-50 rounded-md border border-slate-300 px-2.5 py-1.5" title="Optional: 16-character Google App Password for direct smtp.gmail.com delivery">
+            <span class="text-xs text-slate-500 mr-1.5 font-medium">Gmail App Pass:</span>
+            <input
+              id="gmailAppPassInput"
+              type="password"
+              placeholder="Optional (xxxx xxxx xxxx xxxx)"
+              class="bg-transparent text-xs font-mono text-slate-800 placeholder-slate-400 focus:outline-none w-40"
+            />
+            <button
+              id="saveEmailConfigBtn"
+              class="ml-1.5 text-[11px] font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded px-2 py-0.5 transition"
+            >
+              Save
+            </button>
+          </div>
+
+          <label class="inline-flex items-center space-x-1.5 text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 cursor-pointer select-none">
+            <input id="emailCreatePrCheckbox" type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" />
+            <span>Open fresh GitHub PR first</span>
+          </label>
+
+          <label class="inline-flex items-center space-x-1.5 text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 cursor-pointer select-none">
+            <input id="autoEmailAfterScanCheckbox" type="checkbox" checked class="rounded text-indigo-600 focus:ring-indigo-500" />
+            <span>Auto-email on Scan</span>
+          </label>
+
+          <button
+            id="sendReportEmailBtn"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-3.5 rounded-md shadow-sm transition flex items-center space-x-1.5"
+          >
+            <span>📧 Send Report & PR Email</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Email Dispatch Status Banner -->
+      <div id="emailDispatchStatus" class="hidden mt-3 p-3 rounded-lg border text-xs"></div>
+    </section>
+
     <!-- 4 KPI Cards -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-xl border border-slate-200 border-t-4 border-t-red-500 shadow-sm p-4">
@@ -425,6 +492,9 @@ Running ACME Checkout Unit Tests...
           <p id="reportMetaLine" class="text-xs text-slate-500 mt-1">Report ID: NIST-CRS-0001 | Target Asset: acme-checkout-service</p>
         </div>
         <div class="flex items-center space-x-2 no-print">
+          <button id="modalSendEmailBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-md">
+            📧 Email Report + GitHub PR Link
+          </button>
           <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-2 rounded-md">
             🖨️ Print / Save PDF
           </button>
@@ -643,6 +713,18 @@ Running ACME Checkout Unit Tests...
           document.getElementById('aiModeBadge').innerText = 'OpenAI GPT-4o-mini + RL Active';
         }
 
+        if (data.emailConfig) {
+          if (data.emailConfig.recipientEmail) {
+            document.getElementById('emailRecipientInput').value = data.emailConfig.recipientEmail;
+          }
+          const emailBadge = document.getElementById('emailModeBadge');
+          if (data.emailConfig.gmailSmtpConfigured) {
+            emailBadge.className = 'text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300';
+            emailBadge.innerText = '● Direct Gmail SMTP (smtp.gmail.com:465) Configured';
+            document.getElementById('gmailAppPassInput').placeholder = 'Saved in .env (Direct Gmail Active)';
+          }
+        }
+
         if (!currentFiles.some((f) => f.name === activeFileName) && currentFiles.length > 0) {
           activeFileName = currentFiles[0].name;
         }
@@ -653,6 +735,126 @@ Running ACME Checkout Unit Tests...
         console.error(e);
       }
     }
+
+    async function sendReportEmail(triggeredAutomatically = false) {
+      const btn = document.getElementById('sendReportEmailBtn');
+      const modalBtn = document.getElementById('modalSendEmailBtn');
+      const statusBox = document.getElementById('emailDispatchStatus');
+      const toEmail = document.getElementById('emailRecipientInput').value.trim();
+      const gmailAppPassword = document.getElementById('gmailAppPassInput').value.trim();
+      const createNewPr = document.getElementById('emailCreatePrCheckbox').checked;
+
+      if (!toEmail || !toEmail.includes('@')) {
+        alert('Please enter a valid recipient email or Gmail address.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ Dispatching Report + PR Email...</span>';
+      if (modalBtn) {
+        modalBtn.disabled = true;
+        modalBtn.innerText = '⏳ Sending Email...';
+      }
+      statusBox.className = 'mt-3 p-3 rounded-lg border border-indigo-200 bg-indigo-50/70 text-xs text-indigo-900';
+      statusBox.innerHTML = `⏳ Generating NIST CSF 2.0 HTML Report, linking GitHub PRs, and dispatching email to <strong>${escapeHtml(toEmail)}</strong>...`;
+
+      try {
+        const res = await fetch('/api/send-report-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            toEmail,
+            gmailUser: toEmail,
+            gmailAppPassword,
+            createNewPr
+          })
+        });
+        const data = await res.json();
+        if (!data.success) {
+          throw new Error(data.error || 'Email dispatch failed');
+        }
+
+        const isDirectGmail = data.transportMode === 'gmail-smtp' || data.deliveryMode === 'GMAIL_DIRECT_SMTP';
+        const recipientAddr = data.toEmail || data.recipient || toEmail;
+
+        if (isDirectGmail) {
+          const emailBadge = document.getElementById('emailModeBadge');
+          emailBadge.className = 'text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300';
+          emailBadge.innerText = '● Direct Gmail SMTP (smtp.gmail.com:465) Active';
+        }
+
+        const previewBtnHtml = data.previewUrl
+          ? `<a href="${data.previewUrl}" target="_blank" class="inline-flex items-center px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm transition">📨 Open Live Rendered Email Preview ↗</a>`
+          : '';
+        const gmailWebBtnHtml = data.gmailComposeUrl
+          ? `<a href="${data.gmailComposeUrl}" target="_blank" class="inline-flex items-center px-2.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-semibold shadow-sm transition">✉️ Open Pre-Filled in Gmail Web ↗</a>`
+          : '';
+
+        statusBox.className = 'mt-3 p-3.5 rounded-lg border border-emerald-300 bg-emerald-50/80 text-xs text-slate-800 space-y-2';
+        statusBox.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="font-bold text-emerald-800">✅ ${triggeredAutomatically ? 'Auto-Dispatched' : 'Sent'} NIST CSF 2.0 Report & GitHub PR Email to <code>${escapeHtml(recipientAddr)}</code></span>
+              <span class="ml-2 text-[11px] font-mono text-slate-500">Message-ID: ${escapeHtml(data.messageId || 'OK')}</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-white border border-emerald-200 text-emerald-700">
+              ${isDirectGmail ? 'Delivered via Gmail SMTP (smtp.gmail.com:465)' : 'Dispatched via Live Cloud SMTP Relay'}
+            </span>
+          </div>
+          <div class="text-slate-600">
+            <strong>Linked GitHub PR in Email:</strong>
+            <a href="${data.prUrl}" target="_blank" class="text-indigo-600 underline font-semibold ml-1">${escapeHtml(data.prTitle)} (${escapeHtml(data.prUrl)})</a>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            ${previewBtnHtml}
+            <a href="${data.prUrl}" target="_blank" class="inline-flex items-center px-2.5 py-1 rounded bg-emerald-700 hover:bg-emerald-800 text-white font-semibold shadow-sm transition">🔗 View Linked GitHub PR ↗</a>
+            ${gmailWebBtnHtml}
+          </div>
+        `;
+
+        if (createNewPr) {
+          loadPrs();
+        }
+      } catch (err) {
+        statusBox.className = 'mt-3 p-3 rounded-lg border border-rose-300 bg-rose-50 text-xs text-rose-800';
+        statusBox.innerHTML = `❌ <strong>Email Dispatch Error:</strong> ${escapeHtml(err.message)}`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>📧 Send Report & PR Email</span>';
+        if (modalBtn) {
+          modalBtn.disabled = false;
+          modalBtn.innerText = '📧 Email Report + GitHub PR Link';
+        }
+      }
+    }
+
+    document.getElementById('sendReportEmailBtn').addEventListener('click', () => sendReportEmail(false));
+    document.getElementById('modalSendEmailBtn').addEventListener('click', () => sendReportEmail(false));
+
+    document.getElementById('saveEmailConfigBtn').addEventListener('click', async () => {
+      const toEmail = document.getElementById('emailRecipientInput').value.trim();
+      const gmailAppPassword = document.getElementById('gmailAppPassInput').value.trim();
+      const res = await fetch('/api/save-email-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toEmail, gmailUser: toEmail, gmailAppPassword })
+      });
+      const data = await res.json();
+      if (data.success) {
+        const statusBox = document.getElementById('emailDispatchStatus');
+        statusBox.className = 'mt-3 p-2.5 rounded-lg border border-emerald-200 bg-emerald-50 text-xs text-emerald-800';
+        statusBox.innerHTML = `💾 Saved recipient <code>${escapeHtml(data.recipientEmail)}</code> to local <code>.env</code> (${
+          data.gmailSmtpConfigured ? 'Direct Gmail SMTP App Password Configured' : 'Using Live Cloud SMTP Relay + Gmail Web Compose'
+        }).`;
+        if (data.gmailSmtpConfigured) {
+          document.getElementById('gmailAppPassInput').value = '';
+          document.getElementById('gmailAppPassInput').placeholder = 'Saved in .env (Direct Gmail Active)';
+          const emailBadge = document.getElementById('emailModeBadge');
+          emailBadge.className = 'text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300';
+          emailBadge.innerText = '● Direct Gmail SMTP (smtp.gmail.com:465) Configured';
+        }
+      }
+    });
 
     document.getElementById('loadRepoBtn').addEventListener('click', () => {
       const val = document.getElementById('repoPathInput').value.trim();
@@ -743,6 +945,10 @@ Running ACME Checkout Unit Tests...
 
         badge.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
         badge.innerText = `✅ Scan, Sandbox Verification & RL Episode #${data.rlUpdate.latestEpisode.episode} Complete (${data.kpis.mttrSeconds}s)`;
+
+        if (document.getElementById('autoEmailAfterScanCheckbox').checked) {
+          await sendReportEmail(true);
+        }
       } catch (err) {
         alert('Scan request failed: ' + err.message);
       } finally {
