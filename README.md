@@ -78,17 +78,31 @@ Each vulnerability observation is encoded into a deterministic structural signat
 * `SUPPRESS_UNREACHABLE_NOISE`: Suppress SecOps paging and defer lockfile churn when AST reachability proves `0` import sites.
 * `REWRITE_CALL_SITE_AST`: Refactor sink call site when major upgrades break function signatures.
 
-### 3. Verifiable Reward Signal ($\mathcal{R}$) from Sandbox QA (`Verifier`)
-* **`+1.0` Reward:** Reachable critical CVE neutralized **AND** `npm test` (`test.js`) passes 100% in the sandbox without regressions.
-* **`+0.5` Reward:** Unreachable dependency (`0` imports) accurately suppressed without unnecessary lockfile churn.
+### 3. Verifiable Reward Signal ($R$) from Sandbox QA (`Verifier` — [`agent-server.js:576-578`](crs-agent-backend/agent-server.js#L576-L578))
+* **`+1.0` Reward (`rewardJsYaml`):** Reachable critical CVE neutralized **AND** `npm test` (`test.js`) passes 100% in the sandbox without regressions.
+* **`+0.5` Reward (`rewardLodash`):** Unreachable dependency (`0` imports) accurately suppressed without unnecessary lockfile churn (`totalReward = +1.5` per verified episode).
 * **`-1.0` Penalty:** Applied patch causes unit test failure or runtime regression in `test.js`.
 
-### 4. Temporal-Difference (TD) Q-Learning Update
-After every scan episode (`learningRateAlpha = 0.25`, `discountFactorGamma = 0.90`), the RL engine updates action-value estimates and policy confidence:
+### 4. Contextual Bandit TD(0) Q-Learning Update ([`agent-server.js:126-132`](crs-agent-backend/agent-server.js#L126-L132))
+Because each `(package, AST-reachability)` tuple is evaluated as an independent 1-step contextual bandit transition (`learningRateAlpha = 0.25`), the RL engine updates action-value estimates $Q(s, a)$ via the exact Rescorla-Wagner / TD(0) rule implemented in `updateRlPolicy()`:
 
-$$Q(s, a) \leftarrow Q(s, a) + \alpha \cdot \left( r + \gamma \max_{a'} Q(s', a') - Q(s, a) \right)$$
+$$
+Q(s, a) \leftarrow Q(s, a) + \alpha \cdot \bigl( r - Q(s, a) \bigr)
+$$
 
-$$\text{Confidence}(n) = \min\left(99.8\%,\; 65\% + 34.8\% \cdot \left(1 - e^{-0.32 \cdot n}\right)\right)$$
+And updates policy confidence (in percent, capped at $99.8$) as a function of episode visits $n$ (`entry.visits`):
+
+$$
+\text{Confidence}(n) = \min\Bigl( 99.8,\; 60 + 39.5 \cdot \bigl(1 - e^{-0.45 n}\bigr) \Bigr)
+$$
+
+| Episode Visit ($n$) | `js-yaml` $Q(s,a)$ ($Q_0 = 0.50, r = +1.0$) | `lodash` $Q(s,a)$ ($Q_0 = 0.35, r = +0.5$) | Policy Confidence $\text{Confidence}(n)$ |
+| :---: | :---: | :---: | :---: |
+| **Cold Start ($n=0$)** | `0.5000` | `0.3500` | `50.0%` / `45.0%` |
+| **Episode #1 ($n=1$)** | `0.6250` | `0.3875` | **`74.3%`** |
+| **Episode #2 ($n=2$)** | `0.7188` | `0.4156` | **`83.4%`** |
+| **Episode #3 ($n=3$)** | `0.7891` | `0.4367` | **`89.3%`** |
+| **Episode #4 ($n=4$)** | `0.8418` | `0.4525` | **`93.0%`** |
 
 ---
 
