@@ -1256,7 +1256,7 @@ app.post('/api/send-report-email', async (req, res) => {
 
     // Passwordless Real Inbox Relay via FormSubmit.co (zero Gmail password / zero 2FA changes required)
     let formSubmitStatus = null;
-    if (!gmailAppPassword && toEmail) {
+    if (!gmailAppPassword && toEmail && cronState.formSubmitEnabled !== false) {
       try {
         const fsPayload = JSON.stringify({
           _subject: subject,
@@ -1317,6 +1317,7 @@ const http = require('http');
 const CRON_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
 let cronState = {
   enabled: true,
+  formSubmitEnabled: process.env.FORMSUBMIT_ENABLED !== 'false',
   cronExpression: '*/15 * * * *',
   intervalMinutes: 15,
   nextRunAt: new Date(Date.now() + CRON_INTERVAL_MS).toISOString(),
@@ -1395,6 +1396,38 @@ app.get('/api/cron-status', (req, res) => {
   res.json({
     success: true,
     ...cronState
+  });
+});
+
+app.all('/api/toggle-formsubmit', (req, res) => {
+  const explicit = req.query.enabled ?? req.body?.enabled;
+  if (explicit !== undefined) {
+    cronState.formSubmitEnabled = String(explicit) === 'true';
+  } else {
+    cronState.formSubmitEnabled = !cronState.formSubmitEnabled;
+  }
+  res.json({
+    success: true,
+    formSubmitEnabled: cronState.formSubmitEnabled,
+    message: cronState.formSubmitEnabled
+      ? 'FormSubmit email forwarding is ENABLED.'
+      : 'FormSubmit email forwarding is DISABLED (Kill-Switch Active).'
+  });
+});
+
+app.all('/api/toggle-cron', (req, res) => {
+  const explicit = req.query.enabled ?? req.body?.enabled;
+  if (explicit !== undefined) {
+    cronState.enabled = String(explicit) === 'true';
+  } else {
+    cronState.enabled = !cronState.enabled;
+  }
+  res.json({
+    success: true,
+    cronEnabled: cronState.enabled,
+    message: cronState.enabled
+      ? '15-minute autonomous cron loop is ENABLED.'
+      : '15-minute autonomous cron loop is PAUSED (Kill-Switch Active).'
   });
 });
 
