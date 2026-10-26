@@ -1,6 +1,6 @@
 {
-  "episodes": 1,
-  "cumulativeReward": 1.5,
+  "episodes": 13,
+  "cumulativeReward": 19.5,
   "learningRateAlpha": 0.25,
   "discountFactorGamma": 0.9,
   "qTable": {
@@ -10,9 +10,9 @@
       "cve": "CVE-2019-10766",
       "stateFeatures": "pkg=js-yaml@3.13.0 | imported=true | sink=yaml.load() | line=checkout.js:5",
       "recommendedAction": "UPGRADE_SEMVER_MAJOR_SAFE (^4.1.0 where yaml.load defaults to DEFAULT_SAFE_SCHEMA)",
-      "qValue": 0.625,
-      "visits": 1,
-      "confidence": 74.3,
+      "qValue": 0.9881,
+      "visits": 13,
+      "confidence": 99.4,
       "lastReward": 1,
       "learnedIntuition": "Verified Pattern: Upgrading js-yaml 3.13.0 -> ^4.1.0 neutralizes CWE-502 at checkout.js:5 while preserving 100% unit test compatibility (yaml.load API signature unchanged)."
     },
@@ -22,14 +22,350 @@
       "cve": "CVE-2020-8203",
       "stateFeatures": "pkg=lodash@4.17.15 | imported=false | sink=0 call sites across repo",
       "recommendedAction": "SUPPRESS_UNREACHABLE_NOISE (Defer lockfile churn & suppress SecOps page)",
-      "qValue": 0.3875,
-      "visits": 1,
-      "confidence": 74.3,
+      "qValue": 0.4965,
+      "visits": 13,
+      "confidence": 99.4,
       "lastReward": 0.5,
       "learnedIntuition": "Verified Pattern: Unimported dependency in package.json has 0 reachable AST paths; suppressing alert eliminates 50% SecOps alert fatigue with zero production risk."
     }
   },
   "recentEpisodes": [
+    {
+      "episode": 13,
+      "timestamp": "2026-10-26T01:31:08.819Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9842,
+          "newQ": 0.9881,
+          "tdError": 0.0158,
+          "reward": 1,
+          "visits": 13,
+          "confidence": 99.4
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4953,
+          "newQ": 0.4965,
+          "tdError": 0.0047,
+          "reward": 0.5,
+          "visits": 13,
+          "confidence": 99.4
+        }
+      ]
+    },
+    {
+      "episode": 12,
+      "timestamp": "2026-10-26T01:19:38.037Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9789,
+          "newQ": 0.9842,
+          "tdError": 0.0211,
+          "reward": 1,
+          "visits": 12,
+          "confidence": 99.3
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4937,
+          "newQ": 0.4953,
+          "tdError": 0.0063,
+          "reward": 0.5,
+          "visits": 12,
+          "confidence": 99.3
+        }
+      ]
+    },
+    {
+      "episode": 11,
+      "timestamp": "2026-10-26T01:18:56.330Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9719,
+          "newQ": 0.9789,
+          "tdError": 0.0281,
+          "reward": 1,
+          "visits": 11,
+          "confidence": 99.2
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4916,
+          "newQ": 0.4937,
+          "tdError": 0.0084,
+          "reward": 0.5,
+          "visits": 11,
+          "confidence": 99.2
+        }
+      ]
+    },
+    {
+      "episode": 10,
+      "timestamp": "2026-10-26T01:04:37.462Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9625,
+          "newQ": 0.9719,
+          "tdError": 0.0375,
+          "reward": 1,
+          "visits": 10,
+          "confidence": 99.1
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4888,
+          "newQ": 0.4916,
+          "tdError": 0.0112,
+          "reward": 0.5,
+          "visits": 10,
+          "confidence": 99.1
+        }
+      ]
+    },
+    {
+      "episode": 9,
+      "timestamp": "2026-10-26T01:00:30.867Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.95,
+          "newQ": 0.9625,
+          "tdError": 0.05,
+          "reward": 1,
+          "visits": 9,
+          "confidence": 98.8
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.485,
+          "newQ": 0.4888,
+          "tdError": 0.015,
+          "reward": 0.5,
+          "visits": 9,
+          "confidence": 98.8
+        }
+      ]
+    },
+    {
+      "episode": 8,
+      "timestamp": "2026-10-26T00:43:57.750Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9333,
+          "newQ": 0.95,
+          "tdError": 0.0667,
+          "reward": 1,
+          "visits": 8,
+          "confidence": 98.4
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.48,
+          "newQ": 0.485,
+          "tdError": 0.02,
+          "reward": 0.5,
+          "visits": 8,
+          "confidence": 98.4
+        }
+      ]
+    },
+    {
+      "episode": 7,
+      "timestamp": "2026-10-26T00:28:53.307Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.911,
+          "newQ": 0.9333,
+          "tdError": 0.089,
+          "reward": 1,
+          "visits": 7,
+          "confidence": 97.8
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4733,
+          "newQ": 0.48,
+          "tdError": 0.0267,
+          "reward": 0.5,
+          "visits": 7,
+          "confidence": 97.8
+        }
+      ]
+    },
+    {
+      "episode": 6,
+      "timestamp": "2026-10-26T00:15:29.192Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.8813,
+          "newQ": 0.911,
+          "tdError": 0.1187,
+          "reward": 1,
+          "visits": 6,
+          "confidence": 96.8
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4644,
+          "newQ": 0.4733,
+          "tdError": 0.0356,
+          "reward": 0.5,
+          "visits": 6,
+          "confidence": 96.8
+        }
+      ]
+    },
+    {
+      "episode": 5,
+      "timestamp": "2026-10-26T00:13:58.722Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.8418,
+          "newQ": 0.8813,
+          "tdError": 0.1582,
+          "reward": 1,
+          "visits": 5,
+          "confidence": 95.3
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4525,
+          "newQ": 0.4644,
+          "tdError": 0.0475,
+          "reward": 0.5,
+          "visits": 5,
+          "confidence": 95.3
+        }
+      ]
+    },
+    {
+      "episode": 4,
+      "timestamp": "2026-10-26T00:00:24.686Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.7891,
+          "newQ": 0.8418,
+          "tdError": 0.2109,
+          "reward": 1,
+          "visits": 4,
+          "confidence": 93
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4367,
+          "newQ": 0.4525,
+          "tdError": 0.0633,
+          "reward": 0.5,
+          "visits": 4,
+          "confidence": 93
+        }
+      ]
+    },
+    {
+      "episode": 3,
+      "timestamp": "2026-10-25T23:54:33.915Z",
+      "trigger": "dashboard-manual",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.7188,
+          "newQ": 0.7891,
+          "tdError": 0.2812,
+          "reward": 1,
+          "visits": 3,
+          "confidence": 89.3
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4156,
+          "newQ": 0.4367,
+          "tdError": 0.0844,
+          "reward": 0.5,
+          "visits": 3,
+          "confidence": 89.3
+        }
+      ]
+    },
+    {
+      "episode": 2,
+      "timestamp": "2026-10-25T23:54:12.680Z",
+      "trigger": "dashboard-manual",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
+      "totalReward": 1.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.625,
+          "newQ": 0.7188,
+          "tdError": 0.375,
+          "reward": 1,
+          "visits": 2,
+          "confidence": 83.4
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.3875,
+          "newQ": 0.4156,
+          "tdError": 0.1125,
+          "reward": 0.5,
+          "visits": 2,
+          "confidence": 83.4
+        }
+      ]
+    },
     {
       "episode": 1,
       "timestamp": "2026-10-25T23:08:06.336Z",
