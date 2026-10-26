@@ -5,27 +5,37 @@ const path = require('path');
 const https = require('https');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
+const { GoogleGenAI } = require('@google/genai');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const ENV_PATH = path.join(__dirname, '.env');
+const EXTRA_ENV_PATHS = [
+  path.resolve(__dirname, '..', '.env'),
+  path.resolve(__dirname, '..', '..', '.env')
+];
 const RL_MEMORY_PATH = path.join(__dirname, 'rl-memory.json');
+const EVAL_RESULTS_PATH = path.join(__dirname, 'eval-results.json');
 const DEFAULT_TARGET_DIR = path.resolve(__dirname, '..', 'acme-checkout-service');
 
-// Load .env file natively
+// Load .env file natively (supports crs-agent-backend/.env and root .env)
 function loadEnv() {
-  if (fs.existsSync(ENV_PATH)) {
-    const lines = fs.readFileSync(ENV_PATH, 'utf-8').split(/\r?\n/);
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
-      const eqIdx = trimmed.indexOf('=');
-      if (eqIdx > 0) {
-        const key = trimmed.slice(0, eqIdx).trim();
-        const val = trimmed.slice(eqIdx + 1).trim().replace(/^['"]|['"]$/g, '');
-        process.env[key] = val;
+  for (const envFile of [ENV_PATH, ...EXTRA_ENV_PATHS]) {
+    if (fs.existsSync(envFile)) {
+      const lines = fs.readFileSync(envFile, 'utf-8').split(/\r?\n/);
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx > 0) {
+          const key = trimmed.slice(0, eqIdx).trim();
+          const val = trimmed.slice(eqIdx + 1).trim().replace(/^['"]|['"]$/g, '');
+          if (val || !process.env[key]) {
+            process.env[key] = val;
+          }
+        }
       }
     }
   }
@@ -39,6 +49,7 @@ function saveEnvVars(updates) {
   }
   const content = [
     '# CRS v2.0 Environment Configuration',
+    `GEMINI_API_KEY=${process.env.GEMINI_API_KEY || ''}`,
     `OPENAI_API_KEY=${process.env.OPENAI_API_KEY || ''}`,
     `PORT=${process.env.PORT || '4000'}`,
     `ALERT_RECIPIENT_EMAIL=${process.env.ALERT_RECIPIENT_EMAIL || 'mohnishb07@gmail.com'}`,
@@ -46,12 +57,50 @@ function saveEnvVars(updates) {
     `GMAIL_APP_PASSWORD=${process.env.GMAIL_APP_PASSWORD || ''}`,
     ''
   ].join('\n');
-  fs.writeFileSync(ENV_PATH, content, 'utf-8');
+  for (const envFile of [ENV_PATH, ...EXTRA_ENV_PATHS]) {
+    try {
+      fs.writeFileSync(envFile, content, 'utf-8');
+    } catch {}
+  }
+}
+
+function hasValidGeminiKey(overrideKey) {
+  const key = (overrideKey || process.env.GEMINI_API_KEY || '').trim();
+  return Boolean(key && key.length > 15 && key !== 'your_gemini_api_key_here');
 }
 
 function hasValidOpenAiKey(overrideKey) {
   const key = overrideKey || process.env.OPENAI_API_KEY || '';
   return Boolean(key && key.startsWith('sk-') && key !== 'your_openai_api_key_here');
+}
+
+async function callGeminiArgonSummary(geminiKey, scanSummaryContext) {
+  if (!hasValidGeminiKey(geminiKey)) return null;
+  try {
+    const client = new GoogleGenAI({ apiKey: geminiKey });
+    const interaction = await client.interactions.create({
+      model: 'gemini-4-argon',
+      system_instruction:
+        'You are a Software Dependency & Static AST Reachability Engineering Advisor aligned with NIST CSF 2.0. Provide a concise 2-sentence executive engineering summary of the dependency upgrade, AST reachability verification, unit test status, and RL policy confidence.',
+      input: JSON.stringify(scanSummaryContext),
+      generation_config: {
+        thinking_level: 'high',
+        max_output_tokens: 2048
+      }
+    });
+    const text =
+      interaction.output_text ||
+      (interaction.steps || [])
+        .filter((step) => step.type === 'model_output')
+        .flatMap((step) => step.content || [])
+        .filter((c) => c.type === 'text')
+        .map((c) => c.text)
+        .join('');
+    return text ? text.trim() : null;
+  } catch (e) {
+    console.error('Gemini 4 Argon summary error:', e.message);
+    return null;
+  }
 }
 
 // Initialize or load Reinforcement Learning Memory (Q-Table + Experience Replay)
@@ -337,6 +386,7 @@ app.get('/api/repo-files', (req, res) => {
     res.json({
       success: true,
       ...inspection,
+      geminiConfigured: hasValidGeminiKey(),
       openAiConfigured: hasValidOpenAiKey(),
       emailConfig: {
         recipientEmail: process.env.ALERT_RECIPIENT_EMAIL || 'mohnishb07@gmail.com',
@@ -353,6 +403,33 @@ app.get('/api/repo-files', (req, res) => {
 // Endpoint: Get RL State
 app.get('/api/rl-state', (req, res) => {
   res.json({ success: true, rlState: loadRlMemory() });
+});
+
+// Endpoint: Get 4-Model Benchmark Results (Gemini 4 Argon + Gemini 3.8 Flash + GPT-6 Astra + GPT-4o-mini)
+app.get('/api/eval-results', (req, res) => {
+  if (fs.existsSync(EVAL_RESULTS_PATH)) {
+    res.json({ success: true, evalResults: JSON.parse(fs.readFileSync(EVAL_RESULTS_PATH, 'utf-8')) });
+  } else {
+    res.json({ success: false, evalResults: null });
+  }
+});
+
+// Endpoint: Save Gemini API Key to .env
+app.post('/api/save-gemini-key', (req, res) => {
+  try {
+    const geminiKey = (req.body?.geminiKey || '').trim();
+    if (!geminiKey) {
+      return res.status(400).json({ success: false, error: 'Gemini API Key cannot be empty' });
+    }
+    saveEnvVars({ GEMINI_API_KEY: geminiKey });
+    res.json({
+      success: true,
+      geminiConfigured: hasValidGeminiKey(geminiKey),
+      maskedKey: geminiKey.slice(0, 6) + '...' + geminiKey.slice(-4)
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // Endpoint: Save OpenAI API Key to .env
@@ -406,10 +483,14 @@ app.post('/api/run-scan', async (req, res) => {
     loadEnv();
     const targetDir = req.body?.repoPath ? String(req.body.repoPath).trim() : DEFAULT_TARGET_DIR;
     const uiApiKey = req.body?.apiKey ? String(req.body.apiKey).trim() : '';
+    const uiGeminiKey = req.body?.geminiKey ? String(req.body.geminiKey).trim() : '';
     const trigger = req.body?.trigger || 'dashboard-manual';
 
     if (uiApiKey && uiApiKey.startsWith('sk-')) {
       process.env.OPENAI_API_KEY = uiApiKey;
+    }
+    if (uiGeminiKey && uiGeminiKey.length > 15) {
+      process.env.GEMINI_API_KEY = uiGeminiKey;
     }
 
     const inspection = inspectRepoFiles(targetDir);
@@ -606,16 +687,21 @@ app.post('/api/run-scan', async (req, res) => {
       ]
     });
 
-    // Optional OpenAI Executive Insight
-    const aiExecutiveInsight = await callOpenAiSummary(process.env.OPENAI_API_KEY, {
+    const summaryContext = {
       asset: inspection.assetName,
-      reachableCritical: 'js-yaml@3.13.0 at checkout.js:5 (CVE-2019-10766)',
-      filteredNoise: 'lodash@4.17.15 (0 imports)',
+      primaryFinding: 'js-yaml@3.13.0 at checkout.js:5 (CVE-2019-10766)',
+      filteredNoise: 'lodash@4.17.15 (0 AST imports)',
       patchApplied: 'js-yaml ^4.1.0',
       sandboxTestsPassed: testPassed,
       rlEpisode: latestEpisode.episode,
       rlConfidence: rlState.qTable['deserialization:js-yaml@3.13.0:yaml.load(reachable)']?.confidence
-    });
+    };
+
+    const [geminiInsight, openAiInsight] = await Promise.all([
+      callGeminiArgonSummary(process.env.GEMINI_API_KEY, summaryContext),
+      callOpenAiSummary(process.env.OPENAI_API_KEY, summaryContext)
+    ]);
+    const aiExecutiveInsight = geminiInsight || openAiInsight;
 
     const durationMs = Date.now() - startTime;
 
@@ -624,7 +710,13 @@ app.post('/api/run-scan', async (req, res) => {
       timestamp: new Date().toISOString(),
       trigger,
       durationMs,
-      openAiUsed: Boolean(aiExecutiveInsight),
+      geminiUsed: Boolean(geminiInsight),
+      openAiUsed: Boolean(openAiInsight),
+      aiModelLabel: geminiInsight
+        ? 'Gemini 4 Argon (thinking_level=high) + RL'
+        : openAiInsight
+        ? 'OpenAI GPT-4o-mini Enriched + RL'
+        : 'Deterministic CRS + RL Engine',
       aiExecutiveInsight:
         aiExecutiveInsight ||
         'Deterministic CRS Assessment: Critical deserialization flaw (CVE-2019-10766) in js-yaml@3.13.0 confirmed reachable at checkout.js:5 and remediated via upgrade to ^4.1.0 with 100% sandbox unit test pass rate. Unreachable lodash@4.17.15 alert suppressed (50% alert fatigue reduction).',
@@ -781,7 +873,7 @@ function createGithubScanAndFixPr(rlStateInput) {
       if (fs.existsSync(bodyFilePath)) fs.unlinkSync(bodyFilePath);
     }
 
-    execSync('git checkout -f main', { cwd: repoRoot, stdio: 'pipe' });
+    execSync('git checkout main', { cwd: repoRoot, stdio: 'pipe' });
     fs.writeFileSync(pkgPath, originalPkg, 'utf-8');
     fs.writeFileSync(checkoutPath, originalCheckout, 'utf-8');
     fs.writeFileSync(RL_MEMORY_PATH, JSON.stringify(rlState, null, 2), 'utf-8');

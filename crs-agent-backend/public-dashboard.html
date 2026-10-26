@@ -36,21 +36,37 @@
         </div>
       </div>
 
-      <!-- OpenAI API Key Configuration + Action Buttons -->
+      <!-- Gemini + OpenAI API Key Configuration + Action Buttons -->
       <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center bg-indigo-50/70 rounded-md border border-indigo-200 px-2 py-1">
+          <span id="geminiKeyStatusDot" class="w-2 h-2 rounded-full bg-amber-500 mr-2" title="Gemini API Key status"></span>
+          <input
+            id="geminiKeyInput"
+            type="password"
+            placeholder="Paste Gemini Key (AIza.../AQ...)"
+            class="bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none w-44"
+          />
+          <button
+            id="saveGeminiKeyBtn"
+            class="ml-1.5 text-xs font-semibold bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-300 rounded px-2 py-0.5 transition"
+          >
+            Save Gemini Key
+          </button>
+        </div>
+
         <div class="flex items-center bg-slate-100 rounded-md border border-slate-300 px-2 py-1">
-          <span id="apiKeyStatusDot" class="w-2 h-2 rounded-full bg-amber-500 mr-2" title="API Key status"></span>
+          <span id="apiKeyStatusDot" class="w-2 h-2 rounded-full bg-amber-500 mr-2" title="OpenAI API Key status"></span>
           <input
             id="apiKeyInput"
             type="password"
-            placeholder="Paste OpenAI API Key (sk-...)"
-            class="bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none w-48"
+            placeholder="Paste OpenAI Key (sk-...)"
+            class="bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none w-40"
           />
           <button
             id="saveKeyBtn"
-            class="ml-2 text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded px-2 py-0.5 transition"
+            class="ml-1.5 text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded px-2 py-0.5 transition"
           >
-            Save to .env
+            Save OpenAI Key
           </button>
         </div>
 
@@ -710,10 +726,20 @@ Running ACME Checkout Unit Tests...
         document.getElementById('bannerAssetName').innerText = data.assetName;
         document.getElementById('bannerFilesList').innerText = currentFiles.map((f) => f.name).join(', ');
 
+        const geminiDot = document.getElementById('geminiKeyStatusDot');
+        if (data.geminiConfigured) {
+          geminiDot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-2';
+          document.getElementById('geminiKeyInput').placeholder = 'Gemini 4 Argon Active (.env)';
+          document.getElementById('aiModeBadge').innerText = 'Gemini 4 Argon (thinking_level=high) + RL Active';
+        }
+
         const dot = document.getElementById('apiKeyStatusDot');
         if (data.openAiConfigured) {
           dot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-2';
-          document.getElementById('aiModeBadge').innerText = 'OpenAI GPT-4o-mini + RL Active';
+          document.getElementById('apiKeyInput').placeholder = 'OpenAI Active (.env)';
+          if (!data.geminiConfigured) {
+            document.getElementById('aiModeBadge').innerText = 'OpenAI GPT-6 Astra / 4o-mini + RL Active';
+          }
         }
 
         if (data.emailConfig) {
@@ -864,6 +890,28 @@ Running ACME Checkout Unit Tests...
       loadRepoFiles(val);
     });
 
+    document.getElementById('saveGeminiKeyBtn').addEventListener('click', async () => {
+      const geminiKey = document.getElementById('geminiKeyInput').value.trim();
+      if (!geminiKey) {
+        alert('Paste your Gemini API key first.');
+        return;
+      }
+      const res = await fetch('/api/save-gemini-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ geminiKey })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('geminiKeyStatusDot').className = 'w-2 h-2 rounded-full bg-emerald-500 mr-2';
+        document.getElementById('aiModeBadge').innerText = 'Gemini 4 Argon (thinking_level=high) + RL Active';
+        document.getElementById('geminiKeyInput').value = '';
+        document.getElementById('geminiKeyInput').placeholder = `Saved (${data.maskedKey})`;
+      } else {
+        alert('Error saving Gemini key: ' + data.error);
+      }
+    });
+
     document.getElementById('saveKeyBtn').addEventListener('click', async () => {
       const apiKey = document.getElementById('apiKeyInput').value.trim();
       if (!apiKey) {
@@ -891,6 +939,7 @@ Running ACME Checkout Unit Tests...
       const badge = document.getElementById('scanStatusBadge');
       const repoPath = document.getElementById('repoPathInput').value.trim();
       const apiKey = document.getElementById('apiKeyInput').value.trim();
+      const geminiKey = document.getElementById('geminiKeyInput').value.trim();
 
       btn.disabled = true;
       btn.innerHTML = '<span>⏳ Running 4-Agent OODA Loop + Sandbox QA...</span>';
@@ -901,7 +950,7 @@ Running ACME Checkout Unit Tests...
         const res = await fetch('/api/run-scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ repoPath, apiKey, trigger: 'dashboard-manual' })
+          body: JSON.stringify({ repoPath, apiKey, geminiKey, trigger: 'dashboard-manual' })
         });
         const data = await res.json();
         if (!data.success) {
@@ -916,9 +965,13 @@ Running ACME Checkout Unit Tests...
 
         // Update Executive Insight
         document.getElementById('executiveInsightText').innerText = data.aiExecutiveInsight;
-        document.getElementById('aiModeBadge').innerText = data.openAiUsed
-          ? 'OpenAI GPT-4o-mini Enriched + RL'
-          : 'Deterministic CRS + RL Engine';
+        document.getElementById('aiModeBadge').innerText =
+          data.aiModelLabel ||
+          (data.geminiUsed
+            ? 'Gemini 4 Argon (thinking_level=high) + RL'
+            : data.openAiUsed
+            ? 'OpenAI GPT-4o-mini Enriched + RL'
+            : 'Deterministic CRS + RL Engine');
 
         // Update Diffs & Terminal Output
         document.getElementById('diffBeforePkg').innerText = data.agents.surgeon.diffs.packageJson.before;
