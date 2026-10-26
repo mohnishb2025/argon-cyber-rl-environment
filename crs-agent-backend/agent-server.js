@@ -1346,6 +1346,15 @@ async function executeScheduled15MinCron() {
 
 setInterval(executeScheduled15MinCron, CRON_INTERVAL_MS);
 
+app.all('/api/cron-tick', async (req, res) => {
+  await executeScheduled15MinCron();
+  res.json({
+    success: true,
+    triggeredBy: 'cloud-cron-tick',
+    ...cronState
+  });
+});
+
 app.get('/api/cron-status', (req, res) => {
   res.json({
     success: true,
@@ -1356,4 +1365,7 @@ app.get('/api/cron-status', (req, res) => {
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`CRS v2.0 Agent Backend (OODA + RL Engine + 15-Min Cron) running on http://0.0.0.0:${PORT}`);
+  setTimeout(() => {
+    executeScheduled15MinCron().catch(() => {});
+  }, 5000);
 });
