@@ -1,0 +1,85 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index 4e643bb7..128dff8e 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -253,7 +253,7 @@ allocator-api2 = "0.2.21"
+ allsorts = { version = "0.14.0", default-features = false, features = [
+   "flate2_rust",
+ ] }
+-anyhow = "1.0.100"
++anyhow = "1.0.103"
+ async-trait = "0.1.64"
+ base64 = "0.22.1"
+ bincode = { version = "2.0.1", features = ["serde"] }
+@@ -371,7 +371,7 @@ windows-sys = "0.60"
+ uuid = "1.18.1"
+ vergen = { version = "9.0.6", features = ["cargo"] }
+ vergen-gitcl = { version = "1.0.8", features = ["cargo"] }
+-webbrowser = "1.0.6"
++webbrowser = "1.2.2"
+ 
+ [patch.crates-io]
+ bincode = { git = "https://github.com/bgw/bincode.git", branch = "bgw/patches" }
+diff --git a/packages/next/package.json b/packages/next/package.json
+index 6b21479e..3f4e63db 100644
+--- a/packages/next/package.json
++++ b/packages/next/package.json
+@@ -105,7 +105,7 @@
+   "dependencies": {
+     "@next/env": "workspace:*",
+     "@swc/helpers": "0.5.23",
+-    "baseline-browser-mapping": "^2.9.19",
++    "baseline-browser-mapping": "^2.11.0",
+     "caniuse-lite": "^1.0.30001579",
+     "postcss": "8.5.23",
+     "styled-jsx": "5.1.6"
+@@ -133,7 +133,7 @@
+     }
+   },
+   "optionalDependencies": {
+-    "sharp": "^0.35.4"
++    "sharp": "^0.35.5"
+   },
+   "devDependencies": {
+     "@babel/core": "7.26.10",
+@@ -253,9 +253,9 @@
+     "constants-browserify": "1.0.0",
+     "content-disposition": "0.5.3",
+     "content-type": "1.0.4",
+-    "cookie": "0.4.1",
++    "cookie": "0.7.0",
+     "cross-env": "6.0.3",
+-    "cross-spawn": "7.0.3",
++    "cross-spawn": "7.0.5",
+     "crypto-browserify": "3.12.0",
+     "css-loader": "7.1.2",
+     "css.escape": "1.5.1",
+@@ -321,8 +321,8 @@
+     "sass-loader": "16.0.5",
+     "schema-utils2": "npm:schema-utils@2.7.1",
+     "schema-utils3": "npm:schema-utils@3.0.0",
+-    "semver": "7.3.2",
+-    "send": "0.18.0",
++    "semver": "7.5.2",
++    "send": "0.19.0",
+     "serve-handler": "6.1.6",
+     "server-only": "0.0.1",
+     "setimmediate": "1.0.5",
+@@ -340,7 +340,7 @@
+     "strip-ansi": "6.0.0",
+     "style-loader": "4.0.0",
+     "superstruct": "1.0.3",
+-    "tar": "7.5.11",
++    "tar": "7.5.19",
+     "taskr": "1.1.0",
+     "terser": "5.27.0",
+     "terser-webpack-plugin": "5.3.9",
+@@ -358,7 +358,7 @@
+     "webpack-sources1": "npm:webpack-sources@1.4.3",
+     "webpack-sources3": "npm:webpack-sources@3.2.3",
+     "write-file-atomic": "7.0.1",
+-    "ws": "8.2.3",
++    "ws": "8.17.1",
+     "zod": "3.25.76",
+     "zod-validation-error": "3.4.0"
+   },
