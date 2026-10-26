@@ -1,0 +1,710 @@
+{
+  "timestamp": "2026-10-26T01:45:38.997Z",
+  "totalTasks": 6,
+  "totalCriteriaChecks": 36,
+  "models": {
+    "gpt4oMini": {
+      "model": "gpt-4o-mini",
+      "effort": "standard (temp=0)",
+      "pointsEarned": 19,
+      "pointsPossible": 36,
+      "overallAccuracyPct": 52.8,
+      "avgLatencyMs": 1595,
+      "totalLatencyMs": 9572,
+      "totalReasoningTokens": 0
+    },
+    "gpt6AstraMax": {
+      "model": "gpt-6-astra",
+      "effort": "max (Maximum Difficulty)",
+      "pointsEarned": 36,
+      "pointsPossible": 36,
+      "overallAccuracyPct": 100,
+      "avgLatencyMs": 20351,
+      "totalLatencyMs": 122104,
+      "totalReasoningTokens": 8288
+    },
+    "gemini38Flash": {
+      "model": "gemini-3.8-flash",
+      "effort": "low (Fast Baseline)",
+      "pointsEarned": 32,
+      "pointsPossible": 36,
+      "overallAccuracyPct": 88.9,
+      "avgLatencyMs": 12668,
+      "totalLatencyMs": 76008
+    },
+    "gemini4ArgonHigh": {
+      "model": "gemini-4-argon",
+      "effort": "high (Maximum Reasoning Depth)",
+      "pointsEarned": 33,
+      "pointsPossible": 36,
+      "overallAccuracyPct": 91.7,
+      "avgLatencyMs": 50770,
+      "totalLatencyMs": 304618,
+      "totalThinkingTokens": 6
+    }
+  },
+  "accuracyDeltaPct": 47.2,
+  "tasks": [
+    {
+      "id": "EVAL-1-AST-SHADOWING-AND-TAINT",
+      "title": "Variable Shadowing, Dead-Branch Invariants & Prototype Pollution Taint Analysis",
+      "category": "AST Reachability & Taint Analysis",
+      "difficulty": "MAXIMUM",
+      "groundTruth": {
+        "parseManifestExploitableAtRuntime": false,
+        "constructorPrototypeBypassWorks": true,
+        "nestedProtoStringBypassWorks": true,
+        "emptyObjectLiteralStillPollutesGlobalPrototype": true,
+        "exploitableLineNumber": 14
+      },
+      "gpt4oMini": {
+        "passed": 5,
+        "total": 5,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 2680,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "answer": {
+          "parseManifestExploitableAtRuntime": false,
+          "constructorPrototypeBypassWorks": true,
+          "nestedProtoStringBypassWorks": true,
+          "emptyObjectLiteralStillPollutesGlobalPrototype": true,
+          "exploitableLineNumber": 14
+        }
+      },
+      "gpt6AstraMax": {
+        "passed": 5,
+        "total": 5,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 21521,
+        "outputTokens": 1376,
+        "reasoningTokens": 1311,
+        "answer": {
+          "parseManifestExploitableAtRuntime": false,
+          "constructorPrototypeBypassWorks": true,
+          "nestedProtoStringBypassWorks": true,
+          "emptyObjectLiteralStillPollutesGlobalPrototype": true,
+          "exploitableLineNumber": 14
+        }
+      },
+      "gemini38Flash": {
+        "passed": 5,
+        "total": 5,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 6989,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "parseManifestExploitableAtRuntime": false,
+          "constructorPrototypeBypassWorks": true,
+          "nestedProtoStringBypassWorks": true,
+          "emptyObjectLiteralStillPollutesGlobalPrototype": true,
+          "exploitableLineNumber": 14
+        }
+      },
+      "gemini4ArgonHigh": {
+        "passed": 5,
+        "total": 5,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 22678,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "parseManifestExploitableAtRuntime": false,
+          "constructorPrototypeBypassWorks": true,
+          "nestedProtoStringBypassWorks": true,
+          "emptyObjectLiteralStillPollutesGlobalPrototype": true,
+          "exploitableLineNumber": 14
+        }
+      }
+    },
+    {
+      "id": "EVAL-2-SEMVER-API-BREAKAGE-MATRIX",
+      "title": "js-yaml 3.13.0 -> 4.1.0 Exact Runtime Exception & Schema Semantics Matrix",
+      "category": "Surgeon Agent Patch Verification",
+      "difficulty": "MAXIMUM",
+      "groundTruth": {
+        "expr1Throws": false,
+        "expr2ThrowsTypeError": false,
+        "expr3ThrowsTypeError": false,
+        "expr4ThrowsYamlException": true,
+        "expr5DefaultFullSchemaIsUndefined": true
+      },
+      "gpt4oMini": {
+        "passed": 2,
+        "total": 5,
+        "accuracyPct": 40,
+        "checks": [
+          true,
+          false,
+          false,
+          true,
+          false
+        ],
+        "latencyMs": 1121,
+        "outputTokens": 53,
+        "reasoningTokens": 0,
+        "answer": {
+          "expr1Throws": false,
+          "expr2ThrowsTypeError": true,
+          "expr3ThrowsTypeError": true,
+          "expr4ThrowsYamlException": true,
+          "expr5DefaultFullSchemaIsUndefined": false
+        }
+      },
+      "gpt6AstraMax": {
+        "passed": 5,
+        "total": 5,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 10223,
+        "outputTokens": 820,
+        "reasoningTokens": 762,
+        "answer": {
+          "expr1Throws": false,
+          "expr2ThrowsTypeError": false,
+          "expr3ThrowsTypeError": false,
+          "expr4ThrowsYamlException": true,
+          "expr5DefaultFullSchemaIsUndefined": true
+        }
+      },
+      "gemini38Flash": {
+        "passed": 3,
+        "total": 5,
+        "accuracyPct": 60,
+        "checks": [
+          true,
+          false,
+          false,
+          true,
+          true
+        ],
+        "latencyMs": 5370,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "expr1Throws": false,
+          "expr2ThrowsTypeError": true,
+          "expr3ThrowsTypeError": true,
+          "expr4ThrowsYamlException": true,
+          "expr5DefaultFullSchemaIsUndefined": true
+        }
+      },
+      "gemini4ArgonHigh": {
+        "passed": 3,
+        "total": 5,
+        "accuracyPct": 60,
+        "checks": [
+          true,
+          false,
+          false,
+          true,
+          true
+        ],
+        "latencyMs": 14176,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "expr1Throws": false,
+          "expr2ThrowsTypeError": true,
+          "expr3ThrowsTypeError": true,
+          "expr4ThrowsYamlException": true,
+          "expr5DefaultFullSchemaIsUndefined": true
+        }
+      }
+    },
+    {
+      "id": "EVAL-3-NONSTATIONARY-TD0-ROUNDING-CASCADE",
+      "title": "6-Episode Stateful TD(0) Q-Learning with Intermediate .toFixed(4) Rounding Cascade",
+      "category": "Reinforcement Learning Math",
+      "difficulty": "MAXIMUM",
+      "groundTruth": {
+        "stateA_Q2": 0.2188,
+        "stateA_Q4": 0.0606,
+        "stateA_Q6": 0.4716,
+        "stateB_Q3": 0.1446,
+        "stateB_Q6": 0.35,
+        "confidenceVisit6": 98.4
+      },
+      "gpt4oMini": {
+        "passed": 0,
+        "total": 6,
+        "accuracyPct": 0,
+        "checks": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "latencyMs": 1183,
+        "outputTokens": 81,
+        "reasoningTokens": 0,
+        "answer": {
+          "stateA_Q2": 0.25,
+          "stateA_Q4": 0.25,
+          "stateA_Q6": 0.75,
+          "stateB_Q3": 0.25,
+          "stateB_Q6": 0.5,
+          "confidenceVisit6": 15
+        }
+      },
+      "gpt6AstraMax": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 66812,
+        "outputTokens": 4879,
+        "reasoningTokens": 4795,
+        "answer": {
+          "stateA_Q2": 0.2188,
+          "stateA_Q4": 0.0606,
+          "stateA_Q6": 0.4716,
+          "stateB_Q3": 0.1446,
+          "stateB_Q6": 0.35,
+          "confidenceVisit6": 98.4
+        }
+      },
+      "gemini38Flash": {
+        "passed": 4,
+        "total": 6,
+        "accuracyPct": 66.7,
+        "checks": [
+          true,
+          true,
+          true,
+          false,
+          false,
+          true
+        ],
+        "latencyMs": 25372,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "stateA_Q2": 0.2188,
+          "stateA_Q4": 0.0606,
+          "stateA_Q6": 0.4716,
+          "stateB_Q3": 0.1445,
+          "stateB_Q6": 0.3501,
+          "confidenceVisit6": 98.4
+        }
+      },
+      "gemini4ArgonHigh": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 157209,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "stateA_Q2": 0.2188,
+          "stateA_Q4": 0.0606,
+          "stateA_Q6": 0.4716,
+          "stateB_Q3": 0.1446,
+          "stateB_Q6": 0.35,
+          "confidenceVisit6": 98.4
+        }
+      }
+    },
+    {
+      "id": "EVAL-4-NODE-BUFFER-AND-TIMINGSAFE-QUIRKS",
+      "title": "Node.js Buffer.from Hex Decoding Truncation & timingSafeEqual Subtle Edge Cases",
+      "category": "Cryptographic Implementation Audit",
+      "difficulty": "MAXIMUM",
+      "groundTruth": {
+        "exprALength": 3,
+        "exprBLength": 2,
+        "exprCAscii": "AB",
+        "exprDLength": 39,
+        "exprEReturnsTrue": true,
+        "exprFReturnsTrueOnLittleEndian": true
+      },
+      "gpt4oMini": {
+        "passed": 2,
+        "total": 6,
+        "accuracyPct": 33.3,
+        "checks": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "latencyMs": 1473,
+        "outputTokens": 62,
+        "reasoningTokens": 0,
+        "answer": {
+          "exprALength": 3,
+          "exprBLength": 2,
+          "exprCAscii": "ABc",
+          "exprDLength": 42,
+          "exprEReturnsTrue": false,
+          "exprFReturnsTrueOnLittleEndian": false
+        }
+      },
+      "gpt6AstraMax": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 9703,
+        "outputTokens": 702,
+        "reasoningTokens": 636,
+        "answer": {
+          "exprALength": 3,
+          "exprBLength": 2,
+          "exprCAscii": "AB",
+          "exprDLength": 39,
+          "exprEReturnsTrue": true,
+          "exprFReturnsTrueOnLittleEndian": true
+        }
+      },
+      "gemini38Flash": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 15136,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "exprALength": 3,
+          "exprBLength": 2,
+          "exprCAscii": "AB",
+          "exprDLength": 39,
+          "exprEReturnsTrue": true,
+          "exprFReturnsTrueOnLittleEndian": true
+        }
+      },
+      "gemini4ArgonHigh": {
+        "passed": 5,
+        "total": 6,
+        "accuracyPct": 83.3,
+        "checks": [
+          true,
+          true,
+          true,
+          false,
+          true,
+          true
+        ],
+        "latencyMs": 70554,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "exprALength": 3,
+          "exprBLength": 2,
+          "exprCAscii": "AB",
+          "exprDLength": 42,
+          "exprEReturnsTrue": true,
+          "exprFReturnsTrueOnLittleEndian": true
+        }
+      }
+    },
+    {
+      "id": "EVAL-5-CONSTRAINED-KNAPSACK-MDP-POLICY",
+      "title": "NP-Hard Coupled Security Patch Selection Under Regression & Latency Constraints",
+      "category": "RL Policy & NIST CSF 2.0 Decision Theory",
+      "difficulty": "MAXIMUM",
+      "groundTruth": {
+        "D1": "WAF_VIRTUAL_PATCH",
+        "D2": "REFACTOR_PLUGIN",
+        "D3": "SUPPRESS_NOISE",
+        "D4": "SURGICAL_AST_FIX",
+        "D5": "SUPPRESS_NOISE",
+        "totalLatency": 42,
+        "totalRisk": 3,
+        "maxTotalReward": 40
+      },
+      "gpt4oMini": {
+        "passed": 4,
+        "total": 8,
+        "accuracyPct": 50,
+        "checks": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false,
+          false
+        ],
+        "latencyMs": 1363,
+        "outputTokens": 88,
+        "reasoningTokens": 0,
+        "answer": {
+          "D1": "UPGRADE_V4",
+          "D2": "REFACTOR_PLUGIN",
+          "D3": "SUPPRESS_NOISE",
+          "D4": "SURGICAL_AST_FIX",
+          "D5": "SUPPRESS_NOISE",
+          "totalLatency": 50,
+          "totalRisk": 4,
+          "maxTotalReward": 31
+        }
+      },
+      "gpt6AstraMax": {
+        "passed": 8,
+        "total": 8,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 8820,
+        "outputTokens": 690,
+        "reasoningTokens": 600,
+        "answer": {
+          "D1": "WAF_VIRTUAL_PATCH",
+          "D2": "REFACTOR_PLUGIN",
+          "D3": "SUPPRESS_NOISE",
+          "D4": "SURGICAL_AST_FIX",
+          "D5": "SUPPRESS_NOISE",
+          "totalLatency": 42,
+          "totalRisk": 3,
+          "maxTotalReward": 40
+        }
+      },
+      "gemini38Flash": {
+        "passed": 8,
+        "total": 8,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 19046,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "D1": "WAF_VIRTUAL_PATCH",
+          "D2": "REFACTOR_PLUGIN",
+          "D3": "SUPPRESS_NOISE",
+          "D4": "SURGICAL_AST_FIX",
+          "D5": "SUPPRESS_NOISE",
+          "totalLatency": 42,
+          "totalRisk": 3,
+          "maxTotalReward": 40
+        }
+      },
+      "gemini4ArgonHigh": {
+        "passed": 8,
+        "total": 8,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 27250,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "D1": "WAF_VIRTUAL_PATCH",
+          "D2": "REFACTOR_PLUGIN",
+          "D3": "SUPPRESS_NOISE",
+          "D4": "SURGICAL_AST_FIX",
+          "D5": "SUPPRESS_NOISE",
+          "totalLatency": 42,
+          "totalRisk": 3,
+          "maxTotalReward": 40
+        }
+      }
+    },
+    {
+      "id": "EVAL-6-JS-PROTOTYPE-INHERITANCE-GRAPH-SECURITY",
+      "title": "Deep V8 Prototype Chain & Object.create(null) Sandbox Escape Analysis",
+      "category": "Advanced JavaScript Runtime Security",
+      "difficulty": "MAXIMUM",
+      "groundTruth": {
+        "objectCreateNullHasIsAdmin": false,
+        "mergedObjectAssignInheritsIsAdmin": true,
+        "toStringInObjectCreateNull": false,
+        "jsonParseAlonePollutesGlobalObjectPrototype": false,
+        "objectAssignWithJsonParsedProtoChangesTargetPrototype": true,
+        "objectAssignWithJsonParsedProtoPollutesGlobalObjectPrototype": false
+      },
+      "gpt4oMini": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 1752,
+        "outputTokens": 81,
+        "reasoningTokens": 0,
+        "answer": {
+          "objectCreateNullHasIsAdmin": false,
+          "mergedObjectAssignInheritsIsAdmin": true,
+          "toStringInObjectCreateNull": false,
+          "jsonParseAlonePollutesGlobalObjectPrototype": false,
+          "objectAssignWithJsonParsedProtoChangesTargetPrototype": true,
+          "objectAssignWithJsonParsedProtoPollutesGlobalObjectPrototype": false
+        }
+      },
+      "gpt6AstraMax": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 5025,
+        "outputTokens": 270,
+        "reasoningTokens": 184,
+        "answer": {
+          "objectCreateNullHasIsAdmin": false,
+          "mergedObjectAssignInheritsIsAdmin": true,
+          "toStringInObjectCreateNull": false,
+          "jsonParseAlonePollutesGlobalObjectPrototype": false,
+          "objectAssignWithJsonParsedProtoChangesTargetPrototype": true,
+          "objectAssignWithJsonParsedProtoPollutesGlobalObjectPrototype": false
+        }
+      },
+      "gemini38Flash": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 4095,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "objectCreateNullHasIsAdmin": false,
+          "mergedObjectAssignInheritsIsAdmin": true,
+          "toStringInObjectCreateNull": false,
+          "jsonParseAlonePollutesGlobalObjectPrototype": false,
+          "objectAssignWithJsonParsedProtoChangesTargetPrototype": true,
+          "objectAssignWithJsonParsedProtoPollutesGlobalObjectPrototype": false
+        }
+      },
+      "gemini4ArgonHigh": {
+        "passed": 6,
+        "total": 6,
+        "accuracyPct": 100,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latencyMs": 12751,
+        "outputTokens": 0,
+        "thinkingTokens": 1,
+        "answer": {
+          "objectCreateNullHasIsAdmin": false,
+          "mergedObjectAssignInheritsIsAdmin": true,
+          "toStringInObjectCreateNull": false,
+          "jsonParseAlonePollutesGlobalObjectPrototype": false,
+          "objectAssignWithJsonParsedProtoChangesTargetPrototype": true,
+          "objectAssignWithJsonParsedProtoPollutesGlobalObjectPrototype": false
+        }
+      }
+    }
+  ],
+  "geminiAccuracyDeltaPct": 2.8
+}
