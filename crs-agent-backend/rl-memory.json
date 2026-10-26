@@ -1,6 +1,6 @@
 {
-  "episodes": 31,
-  "cumulativeReward": 76.5,
+  "episodes": 34,
+  "cumulativeReward": 90,
   "learningRateAlpha": 0.25,
   "discountFactorGamma": 0.9,
   "qTable": {
@@ -11,7 +11,7 @@
       "stateFeatures": "pkg=js-yaml@3.13.0 | imported=true | sink=yaml.load() | line=checkout.js:5",
       "recommendedAction": "UPGRADE_SEMVER_MAJOR_SAFE (^4.1.0 where yaml.load defaults to DEFAULT_SAFE_SCHEMA)",
       "qValue": 0.9999,
-      "visits": 31,
+      "visits": 34,
       "confidence": 99.5,
       "lastReward": 1,
       "learnedIntuition": "Verified Pattern: Upgrading js-yaml 3.13.0 -> ^4.1.0 neutralizes CWE-502 at checkout.js:5 while preserving 100% unit test compatibility (yaml.load API signature unchanged)."
@@ -23,7 +23,7 @@
       "stateFeatures": "pkg=lodash@4.17.15 | imported=false | sink=0 call sites across repo",
       "recommendedAction": "SUPPRESS_UNREACHABLE_NOISE (Defer lockfile churn & suppress SecOps page)",
       "qValue": 0.4999,
-      "visits": 31,
+      "visits": 34,
       "confidence": 99.5,
       "lastReward": 0.5,
       "learnedIntuition": "Verified Pattern: Unimported dependency in package.json has 0 reachable AST paths; suppressing alert eliminates 50% SecOps alert fatigue with zero production risk."
@@ -34,9 +34,9 @@
       "cve": "RUSTSEC-2026-0257 / GHSA-2ph8-5cr8-hr33",
       "stateFeatures": "crate=webbrowser@1.0.6 | imported=true | sink=webbrowser::open() | line=turbopack-cli/src/dev/mod.rs:484",
       "recommendedAction": "UPGRADE_CRATE_SAFE (Cargo.toml webbrowser 1.0.6 -> 1.2.2; PR https://github.com/mohnishb2025/next.js/pull/1)",
-      "qValue": 0.9719,
-      "visits": 10,
-      "confidence": 99.1,
+      "qValue": 0.9881,
+      "visits": 13,
+      "confidence": 99.4,
       "lastReward": 1,
       "learnedIntuition": "OSS Turbopack Pattern: webbrowser::open(&index_uri) is invoked by default on dev server startup (src/dev/mod.rs:484); upgrading to 1.2.2 neutralizes Unix BROWSER argument injection."
     },
@@ -47,8 +47,8 @@
       "stateFeatures": "crate=anyhow@1.0.100 | imported=true | sink=downcast_ref() only (0 downcast_mut calls) | line=src/dev/mod.rs:171",
       "recommendedAction": "DE_ESCALATE_SYMBOL_SAFE_AND_BUMP (Proactive bump 1.0.100 -> 1.0.103 without paging SecOps)",
       "qValue": 0.5,
-      "visits": 10,
-      "confidence": 99.1,
+      "visits": 13,
+      "confidence": 99.4,
       "lastReward": 0.5,
       "learnedIntuition": "OSS Turbopack Pattern: AST symbol check proved Turbopack only invokes immutable e.downcast_ref::<std::io::Error>() rather than unsound downcast_mut()."
     },
@@ -58,9 +58,9 @@
       "cve": "CVE-2024-37890 / CVE-2026-59873 / CVE-2024-21538",
       "stateFeatures": "manifest=packages/next/package.json | ncc_precompiled=true | pkgs=ws@8.2.3,tar@7.5.11,cross-spawn@7.0.3,semver@7.3.2,sharp@0.35.4",
       "recommendedAction": "UPGRADE_NCC_BUNDLED_RUNTIME_DEPS (ws->8.17.1, tar->7.5.19, cross-spawn->7.0.5, semver->7.5.2, sharp->^0.35.5)",
-      "qValue": 0.9719,
-      "visits": 10,
-      "confidence": 99.1,
+      "qValue": 0.9881,
+      "visits": 13,
+      "confidence": 99.4,
       "lastReward": 1,
       "learnedIntuition": "OSS Turbopack Pattern: Next.js taskfile-ncc.js precompiles selected devDependencies into shipped next/dist/compiled/* bundles; these must be treated as production-reachable."
     },
@@ -71,13 +71,205 @@
       "stateFeatures": "repo=vercel/next.js | total_vulns=49 | unreachable_dev_bench=36 (73.5% noise)",
       "recommendedAction": "SUPPRESS_MONOREPO_DEV_NOISE (Leave 36 non-shipped benchmark/test packages untouched)",
       "qValue": 0.5,
-      "visits": 10,
-      "confidence": 99.1,
+      "visits": 13,
+      "confidence": 99.4,
       "lastReward": 0.5,
       "learnedIntuition": "OSS Turbopack Pattern: Suppressing 36 non-shipped monorepo test/benchmark packages cuts 73.5% of CVE alert fatigue and prevents unnecessary lockfile churn."
     }
   },
   "recentEpisodes": [
+    {
+      "episode": 34,
+      "timestamp": "2026-10-26T07:16:15.071Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service + vercel/next.js (turbopack)",
+      "totalReward": 4.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9999,
+          "newQ": 0.9999,
+          "tdError": 0.0001,
+          "reward": 1,
+          "visits": 34,
+          "confidence": 99.5
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4999,
+          "newQ": 0.4999,
+          "tdError": 0.0001,
+          "reward": 0.5,
+          "visits": 34,
+          "confidence": 99.5
+        },
+        {
+          "patternKey": "rustsec-arg-injection:webbrowser@1.0.6:open(reachable)",
+          "oldQ": 0.9842,
+          "newQ": 0.9881,
+          "tdError": 0.0158,
+          "reward": 1,
+          "visits": 13,
+          "confidence": 99.4
+        },
+        {
+          "patternKey": "rustsec-symbol-safe:anyhow@1.0.100:downcast_ref(non-exploitable)",
+          "oldQ": 0.5,
+          "newQ": 0.5,
+          "tdError": 0,
+          "reward": 0.5,
+          "visits": 13,
+          "confidence": 99.4
+        },
+        {
+          "patternKey": "ncc-runtime-bundle:ws@8.2.3+tar@7.5.11:compiled(reachable)",
+          "oldQ": 0.9842,
+          "newQ": 0.9881,
+          "tdError": 0.0158,
+          "reward": 1,
+          "visits": 13,
+          "confidence": 99.4
+        },
+        {
+          "patternKey": "monorepo-dev-noise:vercel-turbopack:36-devDeps(unreachable)",
+          "oldQ": 0.5,
+          "newQ": 0.5,
+          "tdError": 0,
+          "reward": 0.5,
+          "visits": 13,
+          "confidence": 99.4
+        }
+      ]
+    },
+    {
+      "episode": 33,
+      "timestamp": "2026-10-26T07:10:20.088Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service + vercel/next.js (turbopack)",
+      "totalReward": 4.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9999,
+          "newQ": 0.9999,
+          "tdError": 0.0001,
+          "reward": 1,
+          "visits": 33,
+          "confidence": 99.5
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4999,
+          "newQ": 0.4999,
+          "tdError": 0.0001,
+          "reward": 0.5,
+          "visits": 33,
+          "confidence": 99.5
+        },
+        {
+          "patternKey": "rustsec-arg-injection:webbrowser@1.0.6:open(reachable)",
+          "oldQ": 0.9789,
+          "newQ": 0.9842,
+          "tdError": 0.0211,
+          "reward": 1,
+          "visits": 12,
+          "confidence": 99.3
+        },
+        {
+          "patternKey": "rustsec-symbol-safe:anyhow@1.0.100:downcast_ref(non-exploitable)",
+          "oldQ": 0.5,
+          "newQ": 0.5,
+          "tdError": 0,
+          "reward": 0.5,
+          "visits": 12,
+          "confidence": 99.3
+        },
+        {
+          "patternKey": "ncc-runtime-bundle:ws@8.2.3+tar@7.5.11:compiled(reachable)",
+          "oldQ": 0.9789,
+          "newQ": 0.9842,
+          "tdError": 0.0211,
+          "reward": 1,
+          "visits": 12,
+          "confidence": 99.3
+        },
+        {
+          "patternKey": "monorepo-dev-noise:vercel-turbopack:36-devDeps(unreachable)",
+          "oldQ": 0.5,
+          "newQ": 0.5,
+          "tdError": 0,
+          "reward": 0.5,
+          "visits": 12,
+          "confidence": 99.3
+        }
+      ]
+    },
+    {
+      "episode": 32,
+      "timestamp": "2026-10-26T07:00:36.273Z",
+      "trigger": "scheduled-15min-cron",
+      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service + vercel/next.js (turbopack)",
+      "totalReward": 4.5,
+      "testPassed": true,
+      "tdUpdates": [
+        {
+          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
+          "oldQ": 0.9999,
+          "newQ": 0.9999,
+          "tdError": 0.0001,
+          "reward": 1,
+          "visits": 32,
+          "confidence": 99.5
+        },
+        {
+          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
+          "oldQ": 0.4999,
+          "newQ": 0.4999,
+          "tdError": 0.0001,
+          "reward": 0.5,
+          "visits": 32,
+          "confidence": 99.5
+        },
+        {
+          "patternKey": "rustsec-arg-injection:webbrowser@1.0.6:open(reachable)",
+          "oldQ": 0.9719,
+          "newQ": 0.9789,
+          "tdError": 0.0281,
+          "reward": 1,
+          "visits": 11,
+          "confidence": 99.2
+        },
+        {
+          "patternKey": "rustsec-symbol-safe:anyhow@1.0.100:downcast_ref(non-exploitable)",
+          "oldQ": 0.5,
+          "newQ": 0.5,
+          "tdError": 0,
+          "reward": 0.5,
+          "visits": 11,
+          "confidence": 99.2
+        },
+        {
+          "patternKey": "ncc-runtime-bundle:ws@8.2.3+tar@7.5.11:compiled(reachable)",
+          "oldQ": 0.9719,
+          "newQ": 0.9789,
+          "tdError": 0.0281,
+          "reward": 1,
+          "visits": 11,
+          "confidence": 99.2
+        },
+        {
+          "patternKey": "monorepo-dev-noise:vercel-turbopack:36-devDeps(unreachable)",
+          "oldQ": 0.5,
+          "newQ": 0.5,
+          "tdError": 0,
+          "reward": 0.5,
+          "visits": 11,
+          "confidence": 99.2
+        }
+      ]
+    },
     {
       "episode": 31,
       "timestamp": "2026-10-26T06:55:21.403Z",
@@ -911,90 +1103,6 @@
           "reward": 0.5,
           "visits": 15,
           "confidence": 99.5
-        }
-      ]
-    },
-    {
-      "episode": 14,
-      "timestamp": "2026-10-26T01:45:37.981Z",
-      "trigger": "scheduled-15min-cron",
-      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
-      "totalReward": 1.5,
-      "testPassed": true,
-      "tdUpdates": [
-        {
-          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
-          "oldQ": 0.9881,
-          "newQ": 0.9911,
-          "tdError": 0.0119,
-          "reward": 1,
-          "visits": 14,
-          "confidence": 99.4
-        },
-        {
-          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
-          "oldQ": 0.4965,
-          "newQ": 0.4974,
-          "tdError": 0.0035,
-          "reward": 0.5,
-          "visits": 14,
-          "confidence": 99.4
-        }
-      ]
-    },
-    {
-      "episode": 13,
-      "timestamp": "2026-10-26T01:31:08.819Z",
-      "trigger": "scheduled-15min-cron",
-      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
-      "totalReward": 1.5,
-      "testPassed": true,
-      "tdUpdates": [
-        {
-          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
-          "oldQ": 0.9842,
-          "newQ": 0.9881,
-          "tdError": 0.0158,
-          "reward": 1,
-          "visits": 13,
-          "confidence": 99.4
-        },
-        {
-          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
-          "oldQ": 0.4953,
-          "newQ": 0.4965,
-          "tdError": 0.0047,
-          "reward": 0.5,
-          "visits": 13,
-          "confidence": 99.4
-        }
-      ]
-    },
-    {
-      "episode": 12,
-      "timestamp": "2026-10-26T01:19:38.037Z",
-      "trigger": "scheduled-15min-cron",
-      "repoPath": "C:\\Users\\mohni\\argon_hack\\cyber-defense-hackathon\\acme-checkout-service",
-      "totalReward": 1.5,
-      "testPassed": true,
-      "tdUpdates": [
-        {
-          "patternKey": "deserialization:js-yaml@3.13.0:yaml.load(reachable)",
-          "oldQ": 0.9789,
-          "newQ": 0.9842,
-          "tdError": 0.0211,
-          "reward": 1,
-          "visits": 12,
-          "confidence": 99.3
-        },
-        {
-          "patternKey": "proto-pollution:lodash@4.17.15:unimported(unreachable)",
-          "oldQ": 0.4937,
-          "newQ": 0.4953,
-          "tdError": 0.0063,
-          "reward": 0.5,
-          "visits": 12,
-          "confidence": 99.3
         }
       ]
     }

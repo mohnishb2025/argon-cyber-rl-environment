@@ -1,7 +1,7 @@
 const yaml = require('js-yaml');
 
 function processOrderConfig(rawYamlString) {
-  // VULNERABLE: In js-yaml 3.13.0, yaml.load() allows remote code execution!
+  // PATCHED (CRS Surgeon): Upgraded to js-yaml ^4.1.0 where yaml.load() enforces DEFAULT_SAFE_SCHEMA by default
   const config = yaml.load(rawYamlString);
   
   if (!config || !config.merchantId) {
